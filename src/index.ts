@@ -21,7 +21,7 @@ const getProductsToMove = (products: Product[], firstAvailableProductPosition: n
 }
 
 const reOrderCollection = async (collection: Collection, locationId) => {
-  console.info(`📦 Reordering collection: ${collection.title} (${collection.id})`)
+  console.info(`📦 Reordering collection: ${collection.handle}`)
 
   if (collection.sortOrder !== 'MANUAL') {
     console.info(`    ❌ Collection is not set to manual order: ${collection.sortOrder}`)

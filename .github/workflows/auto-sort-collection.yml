@@ -1,0 +1,28 @@
+name: AutoSort Collection
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: '30 5 * * *'
+
+jobs:
+  auto-sort-collection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install dependencies
+        run: yarn install
+      - name: Auto sort collection
+        run: yarn start
+        env:
+          SHOPIFY_SHOP_NAME: ${{ secrets.SHOPIFY_SHOP_NAME }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
