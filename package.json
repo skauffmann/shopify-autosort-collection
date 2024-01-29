@@ -1,0 +1,22 @@
+{
+  "name": "shopify-autosort-collection",
+  "version": "1.0.0",
+  "description": "Moves out of stock products to the end of collection",
+  "main": "src/index.ts",
+  "repository": "git@github.com:skauffmann/shopify-autosort-collection.git",
+  "author": "Samuel Kauffmann <skauffmann@tyneo.net>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@types/node": "^20.11.10",
+    "cross-fetch": "^4.0.0",
+    "dotenv": "^16.4.1",
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0",
+    "tsx": "^4.7.0",
+    "zod": "^3.22.4"
+  }
+}
