@@ -8,7 +8,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "dev": "tsx src/index.ts ./config.json"
   },
   "dependencies": {
     "@types/node": "^20.11.10",

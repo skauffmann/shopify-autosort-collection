@@ -1,0 +1,16 @@
+{
+  "collections": {
+    "default": {
+      "moveUnavailableToEnd": true,
+      "sort": "publish_date"
+    },
+    "produits-populaires": {
+      "moveUnavailableToEnd": true,
+      "sort": "best_selling"
+    },
+    "derniers-ajouts": {
+      "moveUnavailableToEnd": true,
+      "sort": false
+    }
+  }
+}

@@ -16,6 +16,7 @@ export const ProductSchema = z.object({
   id: z.string(),
   title: z.string(),
   handle: z.string(),
+  publishedAt: z.coerce.date(),
   totalInventory: z.number(),
   variants: z.object({
     nodes: z.array(z.object({

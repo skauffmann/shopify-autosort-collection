@@ -71,13 +71,14 @@ const GetProductsSchema = z.object({
 
 
 const GET_PRODUCTS = gql`
-  query GET_PRODUCTS($collectionId: ID!, $after: String, $first: Int, $locationId: ID!) {
+  query GET_PRODUCTS($collectionId: ID!, $sortKey: ProductCollectionSortKeys,$after: String, $first: Int, $locationId: ID!) {
     collection(id: $collectionId) {
-      products(sortKey: MANUAL, first: $first, after: $after) {
+      products(sortKey: $sortKey, first: $first, after: $after) {
         nodes {
           id
           title
           handle
+          publishedAt
           totalInventory
           variants(first: 250) {
             nodes {
@@ -101,15 +102,15 @@ const GET_PRODUCTS = gql`
   }
 `;
 
-export const getProducts = async (collectionId: string, locationId: string, endCursor?: string): Promise<Product[]> => {
+export const getProducts = async (collectionId: string, locationId: string, sortKey: string = 'MANUAL', endCursor?: string): Promise<Product[]> => {
   const allProducts: Product[] = []
-  const result = await client.request(GET_PRODUCTS, { collectionId, first: 250, after: endCursor, locationId });
+  const result = await client.request(GET_PRODUCTS, { collectionId, sortKey: sortKey.toUpperCase(), first: 250, after: endCursor, locationId });
   const { collection } = GetProductsSchema.parse(result);
 
   allProducts.push(...collection.products.nodes);
 
   if (collection.products.pageInfo.hasNextPage) {
-    const nextProducts = await getProducts(collectionId, locationId, collection.products.pageInfo.endCursor);
+    const nextProducts = await getProducts(collectionId, locationId, sortKey, collection.products.pageInfo.endCursor);
     allProducts.push(...nextProducts);
   }
 
@@ -142,12 +143,21 @@ const MoveProductsSchema = z.object({
   })
 });
 export const moveProducts = async (collectionId: string, productIds: string[], index: number) => {
-  const moves = productIds.map(productId => ({ id: productId, newPosition: index.toString() }));
-  const result = await client.request(MOVE_PRODUCTS, { collectionId, moves });
-  const { collectionReorderProducts } = MoveProductsSchema.parse(result);
-  if (collectionReorderProducts.userErrors.length > 0) {
-    console.error('❌ Error moving products:', collectionReorderProducts.userErrors);
-    throw new Error('Error moving products');
+  const batchSize = 250;
+
+  let startIndex = 0;
+  while (startIndex < productIds.length) {
+    const batchIds = productIds.slice(startIndex, startIndex + batchSize);
+    const moves = batchIds.map(productId => ({ id: productId, newPosition: (index + startIndex).toString() }));
+
+    const result = await client.request(MOVE_PRODUCTS, { collectionId, moves });
+    const { collectionReorderProducts } = MoveProductsSchema.parse(result);
+
+    if (collectionReorderProducts.userErrors.length > 0) {
+      console.error('❌ Error moving products:', collectionReorderProducts.userErrors);
+      throw new Error('Error moving products');
+    }
+    startIndex += batchSize;
   }
 }
 
@@ -177,7 +187,6 @@ const GetLocationsSchema = z.object({
 export const getDefaultLocationId = async () => {
   const result = await client.request(GET_DEFAULT_LOCATION);
   const { shop } = GetLocationsSchema.parse(result);
-  console.log(shop.fulfillmentServices[0].location.id)
   return shop.fulfillmentServices[0].location.id;
 }
 

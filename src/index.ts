@@ -1,26 +1,29 @@
 import { config } from "./config";
 import { getCollections, getDefaultLocationId, getProducts, moveProducts } from "./shopify";
+import { CollectionConfig, SortCollection, SortConfig, loadSortConfig } from "./sort-config";
 import { Collection, Product } from "./types";
 import { sleep } from "./utils";
 
-const getFirstAvailableProductPosition = (products: Product[]) => {
-  const firstAvailableProductIndex = products.reverse().findIndex(product => product.totalInventory > 0);
-  if (firstAvailableProductIndex === -1) return null;
-  return products.length - firstAvailableProductIndex;
-}
+const UnsortableSortConfigs = [SortCollection.BestSelling]
 
-const getProductsToMove = (products: Product[], firstAvailableProductPosition: number) => {
-  const productsToMove: Product[] = []
-  for (const [index, product] of products.reverse().entries()) {
-    const productPosition = index + 1
-    if (product.totalInventory === 0 && productPosition < firstAvailableProductPosition) {
-      productsToMove.push(product)
-    }
+const compareProducts = (collectionConfig: CollectionConfig) => (a: Product, b: Product) => {
+  if (collectionConfig.sort === SortCollection.Stock) {
+    return b.totalInventory - a.totalInventory;
   }
-  return productsToMove;
+
+  if (collectionConfig.moveUnavailableToEnd) {
+    if (a.totalInventory === 0 && b.totalInventory > 0) return 1;
+    if (b.totalInventory === 0 && a.totalInventory > 0) return -1;
+  }
+
+  if (collectionConfig.sort === SortCollection.PublishDate) {
+    return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+  }
+
+  return 0;
 }
 
-const reOrderCollection = async (collection: Collection, locationId) => {
+const reOrderCollection = async (collection: Collection, locationId, collectionConfig: CollectionConfig) => {
   console.info(`📦 Reordering collection: ${collection.handle}`)
 
   if (collection.sortOrder !== 'MANUAL') {
@@ -29,22 +32,25 @@ const reOrderCollection = async (collection: Collection, locationId) => {
   }
 
   const products = await getProducts(collection.id, locationId);
+  const sortedProducts =
+    typeof collectionConfig.sort !== 'boolean' && UnsortableSortConfigs.includes(collectionConfig.sort)
+      ? await getProducts(collection.id, locationId, collectionConfig.sort).then(p => p.sort(compareProducts(collectionConfig)))
+      : [...products].sort(compareProducts(collectionConfig))
 
-  const firstAvailableProductPosition = getFirstAvailableProductPosition(products)
-  if (!firstAvailableProductPosition) return;
-  console.info(`    First available product position: ${firstAvailableProductPosition}`)
+  const isSameOrder = sortedProducts.every((product, index) => product.id === products[index].id);
 
-  const productsToMove = getProductsToMove(products, firstAvailableProductPosition);
-
-  if (productsToMove.length === 0) {
+  if (isSameOrder) {
     console.info('    ☑️ No products to move');
     return;
   }
-  await moveProducts(collection.id, productsToMove.map(product => product.id), firstAvailableProductPosition - 1);
-  console.info(`    ✅ Moved ${productsToMove.length} products`);
+  await moveProducts(collection.id, sortedProducts.map(product => product.id), products.length - 1);
+
+  console.info(`    ✅ Move products done`);
 }
 
 const start = async () => {
+  console.info('🚀 Starting shopify-autosort-collection')
+  const sortConfig = await loadSortConfig();
   const locationId = config.locationId ?? await getDefaultLocationId();
 
   const collections = await getCollections();
@@ -54,7 +60,8 @@ const start = async () => {
   console.info(`Found ${productCollections.length} product collections`)
 
   for (const collection of productCollections) {
-    await reOrderCollection(collection, locationId)
+    const collectionSortConfig = sortConfig.collections[collection.handle] ?? sortConfig.collections.default;
+    await reOrderCollection(collection, locationId, collectionSortConfig)
     await sleep(500)
   }
 }

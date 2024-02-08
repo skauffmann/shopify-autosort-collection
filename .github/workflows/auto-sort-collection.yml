@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Auto sort collection
-        run: yarn start
+        run: yarn start ./config.json
         env:
           SHOPIFY_SHOP_NAME: ${{ secrets.SHOPIFY_SHOP_NAME }}
           SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}

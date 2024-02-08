@@ -8,7 +8,7 @@
 
 - **Automated Sorting**: Out-of-stock products are moved to the end of the collection.
 - **Manual Sort Check**: Verifies that the collection's sort order is 'MANUAL'.
-- **Configuration Options**: Set up via the `.dotenv` file or environment variables.
+- **Configuration Options**: Set up via the `.dotenv` file, environment variables, or a configuration file.
 
 ## How it Works
 
@@ -39,6 +39,7 @@
     - `SHOPIFY_SHOP_NAME`: Your Shopify shop URL (e.g., xxx.myshopify.com).
     - `SHOPIFY_ACCESS_TOKEN`: Your Shopify access token (e.g., shppa_xxxx).
     - `SHOPIFY_LOCATION_ID`: Optional. If not set, the default location is used.
+    - Alternatively, you can pass a configuration file path when starting the script.
 
     Ensure these permissions for the Shopify API key: `read_products`, `write_products`, `read_inventory`
 
@@ -50,3 +51,41 @@ Start the script with:
 ```bash
 npm start
 ```
+
+## Adanced configuration
+
+For advanced configuration, you can also pass a configuration file path:
+
+```bash
+npm run start ./config.json
+```
+
+Example configuration file (config.json):
+
+```json
+{
+  "collections": {
+    "default": {
+      "moveUnavailableToEnd": true,
+      "sort": "publish_date"
+    },
+    "produits-populaires": {
+      "moveUnavailableToEnd": true,
+      "sort": "best_selling"
+    },
+    "derniers-ajouts": {
+      "moveUnavailableToEnd": true,
+      "sort": false
+    }
+  }
+}
+```
+
+- `collections.default`: Configures the default behavior.
+- `collections.[handler]`: Configures sorting behavior for a specific collection handler.
+- `moveUnavailableToEnd` (boolean): Specifies whether out-of-stock items should be moved to the end.
+- `sort` (string): Configures the sorting method.
+  Possible values:
+  - `publish_date`: Sort by publish date (newest first).
+  - `best_selling`: Sort by best-selling items first.
+  - `stock`: Sort by available stock quantity first.
