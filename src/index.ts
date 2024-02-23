@@ -58,7 +58,7 @@ const reOrderCollection = async (collection: Collection, locationId, collectionC
     console.info('    ☑️ No products to move');
     return;
   }
-  await moveProducts(collection.id, sortedProductsWithPinned.map(product => product.id), products.length - 1);
+  await moveProducts(collection.id, sortedProducts.map(product => product.id));
 
   console.info(`    ✅ Move products done`);
 }

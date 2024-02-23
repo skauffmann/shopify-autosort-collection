@@ -1,11 +1,12 @@
-import { GraphQLClient, gql } from 'graphql-request';
 import fetch from 'cross-fetch';
+import { gql } from 'graphql-request';
 import { z } from 'zod';
 import { config } from './config';
+import { GraphQLClientRateLimitRetry } from './graphql-client-rate-limit-retry';
 import { Collection, CollectionSchema, Product, ProductSchema } from './types';
 import { sleep } from './utils';
 
-const client = new GraphQLClient(config.graphql.endpoint, {
+const client = new GraphQLClientRateLimitRetry(config.graphql.endpoint, {
   fetch,
   headers: {
     'Content-Type': 'application/graphql',
@@ -116,7 +117,10 @@ export const getProducts = async (collectionId: string, locationId: string, sort
 
   return allProducts.map(product => ({
     ...product,
-    totalInventory: product.variants.nodes.reduce((sum, variant) => sum + variant.inventoryItem.inventoryLevel.quantities[0].quantity, 0),
+    totalInventory: product.variants.nodes.reduce((sum, variant) => {
+      const variantInventory = Math.max(variant.inventoryItem.inventoryLevel.quantities[0]?.quantity ?? 0, 0);
+      return sum + variantInventory;
+    }, 0),
   }));
 }
 
@@ -142,13 +146,13 @@ const MoveProductsSchema = z.object({
     })),
   })
 });
-export const moveProducts = async (collectionId: string, productIds: string[], index: number) => {
+export const moveProducts = async (collectionId: string, productIds: string[]) => {
   const batchSize = 250;
 
   let startIndex = 0;
   while (startIndex < productIds.length) {
     const batchIds = productIds.slice(startIndex, startIndex + batchSize);
-    const moves = batchIds.map(productId => ({ id: productId, newPosition: (index + startIndex).toString() }));
+    const moves = batchIds.map((productId, index) => ({ id: productId, newPosition: (index + startIndex).toString() }));
 
     const result = await client.request(MOVE_PRODUCTS, { collectionId, moves });
     const { collectionReorderProducts } = MoveProductsSchema.parse(result);
