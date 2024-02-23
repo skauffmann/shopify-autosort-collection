@@ -5,7 +5,8 @@ const DEFAULT_SORT_CONFIG = {
   collections: {
     default: {
       moveUnavailableToEnd: true,
-      sort: false
+      sort: false,
+      pinnedProducts: []
     }
   }
 }
@@ -16,9 +17,16 @@ export enum SortCollection {
   BestSelling = 'best_selling',
 }
 
+const PinnedProductConfigSchema = z.object({
+  position: z.number(),
+  handle: z.string(),
+});
+export type PinnedProductConfig = z.infer<typeof PinnedProductConfigSchema>;
+
 const CollectionConfigSchema = z.object({
   moveUnavailableToEnd: z.boolean(),
   sort: z.union([z.boolean(), z.nativeEnum(SortCollection)]).default(false),
+  pinnedProducts: z.array(PinnedProductConfigSchema).default([]),
 });
 export type CollectionConfig = z.infer<typeof CollectionConfigSchema>;
 

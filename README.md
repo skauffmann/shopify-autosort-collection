@@ -76,6 +76,14 @@ Example configuration file (config.json):
     "derniers-ajouts": {
       "moveUnavailableToEnd": true,
       "sort": false
+    },
+    "livres-et-manga": {
+      "moveUnavailableToEnd": true,
+      "sort": "publish_date",
+      "pinnedProducts": [
+        { "position": 1, "handle": "livre-hommage-a-pokemon" },
+        { "position": 2, "handle": "bd-pokemon-detective-pikachu" }
+      ]
     }
   }
 }
@@ -89,3 +97,4 @@ Example configuration file (config.json):
   - `publish_date`: Sort by publish date (newest first).
   - `best_selling`: Sort by best-selling items first.
   - `stock`: Sort by available stock quantity first.
+- `pinnedProducts`: A list of pinned products. The position starts with 1 (and not 0). The product handle is the url fragment of your product.

@@ -11,6 +11,87 @@
     "derniers-ajouts": {
       "moveUnavailableToEnd": true,
       "sort": false
+    },
+    "accessoires": {
+      "moveUnavailableToEnd": true,
+      "sort": "publish_date",
+      "pinnedProducts": [
+        {
+          "position": 4,
+          "handle": "sleeves-proteges-cartes-ultra-pro-transparent-100-piece"
+        },
+        {
+          "position": 5,
+          "handle": "ultra-pro-sleeves-standard-x100-pro-fit-transparent"
+        },
+        {
+          "position": 6,
+          "handle": "sleeves-proteges-cartes-ultra-pro-fit-gloss-transparent-50-pieces"
+        },
+        { "position": 7, "handle": "ultimate-guard-magnetic-card-case-35-pt" },
+        {
+          "position": 8,
+          "handle": "toploader-proteges-cartes-rigide-ultra-pro-transparent"
+        },
+        {
+          "position": 9,
+          "handle": "sleeves-proteges-cartes-ultra-pro-fit-side-load-transparent-100-pieces"
+        }
+      ]
+    },
+    "portfolio": {
+      "moveUnavailableToEnd": true,
+      "sort": "publish_date",
+      "pinnedProducts": [
+        {
+          "position": 4,
+          "handle": "portfolio-9-pochettes-pro-binder-360"
+        },
+        {
+          "position": 5,
+          "handle": "portfolio-9-pochettes-ultimate-guard-flexxfolio"
+        },
+        {
+          "position": 6,
+          "handle": "portfolio-a4-treasurewise-zip-binder"
+        },
+        { "position": 7, "handle": "portfolio-9-pochettes-zipfolio-xenoskin" }
+      ]
+    },
+    "protege-cartes": {
+      "moveUnavailableToEnd": true,
+      "sort": "publish_date",
+      "pinnedProducts": [
+        {
+          "position": 2,
+          "handle": "sleeves-proteges-cartes-ultra-pro-transparent-100-piece"
+        },
+        {
+          "position": 3,
+          "handle": "ultra-pro-sleeves-standard-x100-pro-fit-transparent"
+        },
+        {
+          "position": 4,
+          "handle": "sleeves-proteges-cartes-ultra-pro-fit-gloss-transparent-50-pieces"
+        },
+        { "position": 4, "handle": "ultimate-guard-magnetic-card-case-35-pt" },
+        {
+          "position": 6,
+          "handle": "toploader-proteges-cartes-rigide-ultra-pro-transparent"
+        },
+        {
+          "position": 7,
+          "handle": "sleeves-proteges-cartes-ultra-pro-fit-side-load-transparent-100-pieces"
+        }
+      ]
+    },
+    "livres-et-manga": {
+      "moveUnavailableToEnd": true,
+      "sort": "publish_date",
+      "pinnedProducts": [
+        { "position": 1, "handle": "livre-hommage-a-pokemon" },
+        { "position": 2, "handle": "bd-pokemon-detective-pikachu" }
+      ]
     }
   }
 }
