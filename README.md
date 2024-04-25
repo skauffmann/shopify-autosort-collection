@@ -50,6 +50,7 @@ Start the script with:
 
 ```bash
 npm start
+# yarn start
 ```
 
 ## Adanced configuration
