@@ -53,7 +53,7 @@ npm start
 # yarn start
 ```
 
-## Adanced configuration
+## Advanced configuration
 
 For advanced configuration, you can also pass a configuration file path:
 
