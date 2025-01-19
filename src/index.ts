@@ -71,7 +71,7 @@ const start = async () => {
   const collections = await getCollections();
   console.info(`Retrieved ${collections.length} collections`)
 
-  const productCollections = collections.filter(collection => collection.productsCount > 0);
+  const productCollections = collections.filter(collection => collection.productsCount.count > 0);
   console.info(`Found ${productCollections.length} product collections`)
 
   for (const collection of productCollections) {

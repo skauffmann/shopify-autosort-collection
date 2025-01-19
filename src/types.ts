@@ -4,7 +4,9 @@ import { z } from "zod";
 
 export const CollectionSchema = z.object({
   id: z.string(),
-  productsCount: z.number(),
+  productsCount: z.object({
+    count: z.number(),
+  }),
   title: z.string(),
   handle: z.string(),
   sortOrder: z.string(),

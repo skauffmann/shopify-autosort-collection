@@ -19,7 +19,9 @@ const GET_COLLECTIONS = gql`
     collections(after: $after, first: 10) {
       nodes {
         id
-        productsCount
+        productsCount {
+          count
+        }
         title
         handle
         sortOrder
